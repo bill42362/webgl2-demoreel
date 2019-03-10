@@ -1,0 +1,38 @@
+// {{ camelCase filename }}.js
+'use strict';
+import { fromJS } from 'immutable';
+import {
+  // -- PLOP_PREPEND_REDUCER_ACTION_TYPE --
+  LOGOUT,
+} from '../ActionTypes.js';
+
+export const defaultState = fromJS({
+});
+
+/**
+ * {{ sentenceCase filename }}.
+ * @module reducer/{{ camelCase filename }}
+ */
+const {{ camelCase filename }} = (state = defaultState, action) => {
+  switch(action.type) {
+  // -- PLOP_PREPEND_REDUCER_SWITCH_CASE --
+  case LOGOUT:
+    return _LOGOUT(action.payload)(state);
+  default:
+    return state;
+  }
+};
+
+// -- PLOP_PREPEND_REDUCER_ACTION_HANDLER --
+
+/**
+ * Logout
+ * @kind reducer/actionType
+ * @name LOGOUT
+ * @return {Immutable.Map} New state
+ */
+const _LOGOUT = () => () => {
+  return defaultState;
+};
+
+export default {{ camelCase filename }};

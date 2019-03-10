@@ -1,0 +1,21 @@
+// {{ camelCase filename }}.test.js
+'use strict';
+import {{ camelCase filename }}, { defaultState } from '../{{ camelCase filename }}.js';
+import {
+  // -- PLOP_PREPEND_REDUCER_ACTION_TYPE --
+  LOGOUT,
+} from '../../ActionTypes.js';
+
+describe('reducer {{ camelCase filename }}', () => {
+  it('should return the default state', () => {
+    expect({{ camelCase filename }}(undefined, {})).toEqual(defaultState);
+  });
+  // -- PLOP_PREPEND_REDUCER_ACTION_TEST --
+  it(`should handle ${ LOGOUT }`, () => {
+    const samplePayload = { };
+    const changedState = {{ camelCase filename }}(defaultState, { type: _ANY_ACTION_, payload: samplePayload });
+    const newState = {{ camelCase filename }}(changedState, { type: LOGOUT });
+    expect(newState.toJS())
+      .toEqual(defaultState.toJS());
+  });
+});

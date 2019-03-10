@@ -1,0 +1,33 @@
+// {{ camelCase filename }}.test.js
+'use strict';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import { fromJS } from 'immutable';
+
+import {{ camelCase filename }} from '../{{ camelCase filename }}.js';
+import { {{ constantCase actionType }} } from '../../ActionTypes.js';
+
+const mockStore = configureMockStore([ thunk ]);
+
+describe('action {{ camelCase filename }}', () => {
+  it('should excute without error', () => {
+    const store = mockStore(fromJS({ }));
+{{#if firstParam}}
+    return store.dispatch({{ camelCase filename }}({ {{ camelCase firstParam }} }));
+{{else}}
+    return store.dispatch({{ camelCase filename }}());
+{{/if}}
+  });
+  it('should create an action to {{ lowerCase (titleCase filename) }}', () => {
+    const store = mockStore(fromJS({ }));
+    const expectedActions = [
+      { type: {{ constantCase actionType }}, payload: _PAYLOAD_ }
+    ];
+{{#if firstParam}}
+    store.dispatch({{ camelCase filename }}({ {{ camelCase firstParam }} }));
+{{else}}
+    store.dispatch({{ camelCase filename }}());
+{{/if}}
+    expect(store.getActions()).toEqual(expectedActions);
+  });
+});

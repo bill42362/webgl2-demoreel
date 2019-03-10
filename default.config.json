@@ -1,0 +1,6 @@
+{
+  "NODE_ENV": "develop",
+  "SERVER_SIDE_RENDER": true,
+  "GOOGLE_ANALYTICS_ID": "",
+  "SERVICE_WORKER_FILENAME": "webgl2-demoreel-service-worker.js"
+}

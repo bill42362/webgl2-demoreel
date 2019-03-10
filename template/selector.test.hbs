@@ -1,0 +1,17 @@
+// {{ camelCase filename }}.test.js
+'use strict';
+import { fromJS } from 'immutable';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+
+import reducer from '../../reducer/reducer.js';
+import {{ camelCase filename }} from '../{{ camelCase filename }}.js';
+
+describe('selector {{ camelCase filename }}', () => {
+  it('should return __WHAT__ by {{ lowerCase (sentenceCase key) }}', () => {
+    const store = createStore(reducer, applyMiddleware(thunk));
+    expect(
+      {{ camelCase filename }}(store.getState(), {{ camelCase key }})
+    ).toEqual(__WHAT__);
+  });
+});

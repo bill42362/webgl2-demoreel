@@ -1,0 +1,12 @@
+{{> function-index}}
+{{#each params}}
+  * **{{name}}**: `
+    {{~#each type.names~}}
+      {{#unless @first}}|{{/unless}}{{this}}
+    {{~/each~}}
+  `{{#if optional}} [optional{{#if defaultvalue}}={{defaultvalue}}{{/if}}]
+  {{~/if}} - {{description}}
+{{/each}}
+{{#with returns.[0]}}
+  * => `{{#each type.names}}{{#unless @first}}|{{/unless}}{{this}}{{/each}}`{{#if nullable}} _(null)_{{/if}} - {{description}}
+{{/with}}

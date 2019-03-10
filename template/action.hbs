@@ -1,0 +1,21 @@
+// {{ camelCase filename }}.js
+'use strict';
+import { {{ constantCase actionType }} } from '../ActionTypes.js';
+
+/**
+ * {{ sentenceCase filename }}
+ * @kind action
+{{#if firstParam}}
+ * @param {any} {{ addBigParantheses (camelCase firstParam) }} - action param.
+{{/if}}
+ * @return {Promise} Action promise.
+ */
+{{#if firstParam}}
+const {{ camelCase filename }} = ({ {{ camelCase firstParam }} }) => async dispatch => {
+{{else}}
+const {{ camelCase filename }} = () => async dispatch => {
+{{/if}}
+  return dispatch({ type: {{ constantCase actionType }}, payload: _PAYLOAD_ });
+};
+
+export default {{ camelCase filename }};

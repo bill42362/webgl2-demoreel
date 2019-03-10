@@ -1,0 +1,7 @@
+  it(`should handle ${ {{ constantCase actionType }} }`, () => {
+    const samplePayload = { };
+    const newState = {{ camelCase filename }}(defaultState, { type: {{ constantCase actionType }}, payload: samplePayload });
+    expect(newState.getIn([ _GET_KEYS_ ]).toJS())
+      .toEqual(_REDUCE_RESULT_);
+  });
+  // -- PLOP_PREPEND_REDUCER_ACTION_TEST --

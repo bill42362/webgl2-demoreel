@@ -1,0 +1,2 @@
+// MessageTypes.js
+'use strict';

@@ -1,0 +1,32 @@
+// {{ properCase filename }}.jsx
+import React from 'react';
+{{#if firstProp}}
+import PropTypes from 'prop-types';
+{{/if}}
+import styled from 'styled-components';
+
+{{#if firstProp}}
+const {{ properCase filename }} = ({ {{ camelCase firstProp }} }) => {
+{{else}}
+const {{ properCase filename }} = ({ }) => {
+{{/if}}
+  return <Styled{{ properCase filename }}>
+  </Styled{{ properCase filename }}>;
+};
+
+{{ properCase filename }}.propTypes = {
+{{#if firstProp}}
+  {{ camelCase firstProp }}: PropTypes.string,
+{{/if}}
+};
+
+{{ properCase filename }}.defaultProps = {
+{{#if firstProp}}
+  {{ camelCase firstProp }}: '',
+{{/if}}
+};
+
+const Styled{{ properCase filename }} = styled.div`
+`;
+
+export default {{ properCase filename }};

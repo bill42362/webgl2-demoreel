@@ -1,0 +1,66 @@
+// {{ camelCase filename }}.test.js
+'use strict';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import { fromJS } from 'immutable';
+import fetchMock from 'fetch-mock';
+
+import {{ camelCase filename }} from '../{{ camelCase filename }}.js';
+import {
+  {{ constantCase actionType }},
+  SET_NETWORKING_FETCHING,
+  SET_NETWORKING_SUCCESS,
+  SET_NETWORKING_ERROR,
+} from '../../ActionTypes.js';
+
+const mockStore = configureMockStore([ thunk ]);
+const selectPath = _SELECTPATH_;
+const pathMatcher = 'path:{{endPoint}}';
+
+describe('action {{ camelCase filename }}', () => {
+  afterEach(() => {
+    fetchMock.reset();
+    fetchMock.restore();
+  });
+  it('should excute without error', async () => {
+    fetchMock._METHOD_(pathMatcher, { status: 200, body });
+    const store = mockStore(fromJS({ }));
+{{#if firstParam}}
+    return await store.dispatch({{ camelCase filename }}({ {{ camelCase firstParam }} }));
+{{else}}
+    return await store.dispatch({{ camelCase filename }}());
+{{/if}}
+  });
+  it('should create an action to {{ lowerCase (titleCase filename) }}', async () => {
+    fetchMock._METHOD_(pathMatcher, { status: 200, body: { _RESPONSE_BODY_} });
+    const store = mockStore(fromJS({ }));
+    const expectedActions = [
+      { type: SET_NETWORKING_FETCHING, payload: { selectPath } },
+      { type: {{ constantCase actionType }}, payload: _PAYLOAD_ },
+      { type: SET_NETWORKING_SUCCESS, payload: { selectPath } },
+    ];
+{{#if firstParam}}
+    await store.dispatch({{ camelCase filename }}({ {{ camelCase firstParam }} }));
+{{else}}
+    await store.dispatch({{ camelCase filename }}());
+{{/if}}
+    expect(store.getActions()).toEqual(expectedActions);
+    expect(fetchMock.called(pathMatcher)).toEqual(true);
+  });
+  it('should handle error when fetchin fail', async () => {
+    const sampleError = { code: 'sampleErrorCode' };
+    fetchMock._METHOD_(pathMatcher, { status: 400, body: sampleError });
+    const store = mockStore(fromJS({ }));
+    const expectedActions = [
+      { type: SET_NETWORKING_FETCHING, payload: { selectPath } },
+      { type: SET_NETWORKING_ERROR, payload: { error: new Error(sampleError.code), selectPath } },
+    ];
+{{#if firstParam}}
+    await store.dispatch({{ camelCase filename }}({ {{ camelCase firstParam }} }));
+{{else}}
+    await store.dispatch({{ camelCase filename }}());
+{{/if}}
+    expect(store.getActions()).toEqual(expectedActions);
+    expect(fetchMock.called(pathMatcher)).toEqual(true);
+  });
+});

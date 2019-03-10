@@ -1,0 +1,24 @@
+// {{ camelCase filename }}.js
+'use strict';
+import { Collection } from 'immutable';
+import createCachedSelector from 're-reselect';
+
+/**
+ * Select {{ removeXetter (sentenceCase filename) }} by {{ lowerCase (sentenceCase key) }}
+ * @kind selector
+ * @param {Immutable.Map} state - root state.
+ * @param {KEY_TYPE} {{ camelCase key }} - select key.
+ * @return {RETURN_TYPE} The selected {{ removeXetter (sentenceCase filename) }}.
+ */
+const {{ camelCase filename }} = createCachedSelector(
+  state => state,
+  (state, {{ camelCase key }}) => {{ camelCase key }},
+  (state, {{ camelCase key }}) => {
+    const result = state.getIn([ {{ camelCase key }} ]);
+    return result instanceof Collection ? result.toJS() : result;
+  }
+)(
+  (state, {{ camelCase key }}) => {{ camelCase key }}
+);
+
+export default {{ camelCase filename }};

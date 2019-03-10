@@ -1,0 +1,109 @@
+steps:
+  ### Install
+  - id: install
+    wait_for: ['-']
+    name: gcr.io/cloud-builders/yarn
+    args: ['install']
+  ### Configure
+  - id: configure
+    name: ubuntu
+    wait_for: ['-']
+    entrypoint: /bin/bash
+    args:
+      - -c
+      - |
+
+        if [ "$_IS_FROM_BUILD_TRIGGER" == "true" ]
+        then
+          cat <<-EOF > /workspace/config.json
+          {
+            "NODE_ENV": "$_NODE_ENV",
+            "SERVER_SIDE_RENDER": $_SERVER_SIDE_RENDER,
+            "FACEBOOK_APP_ID": "$_FACEBOOK_APP_ID",
+            "GOOGLE_ANALYTICS_ID": "$_GOOGLE_ANALYTICS_ID",
+            "GOOGLE_AD_WORD_ID": "$_GOOGLE_AD_WORD_ID",
+            "MIXPANEL_TOKEN": "$_MIXPANEL_TOKEN",
+            "FACEBOOK_PIXEL_ID": "$_FACEBOOK_PIXEL_ID",
+            "BITMOVIN_KEY": "$_BITMOVIN_KEY",
+            "SERVICE_WORKER_FILENAME": "$_SERVICE_WORKER_FILENAME",
+            "PUSHER_KEY": "$_PUSHER_KEY",
+            "API_URL": "$_API_URL",
+            "CP_SCOREBOOK_API_URL": "$_CP_SCOREBOOK_API_URL",
+            "MEDIA_URL": "$_MEDIA_URL",
+            "DISCOVER_CATEGORIES": "$_DISCOVER_CATEGORIES",
+            "BADGE_URL": "$_BADGE_URL",
+            "PUBLIC_URL": "$_PUBLIC_URL",
+            "IOS_DOWNLOAD_VERSION": "$_IOS_DOWNLOAD_VERSION",
+            "ANDROID_DOWNLOAD_VERSION": "$_ANDROID_DOWNLOAD_VERSION",
+            "IPHONE_DISTRIBUTION": "$_IPHONE_DISTRIBUTION",
+            "IOS_SUPPORT_VERSION": "$_IOS_SUPPORT_VERSION",
+            "ANDROID_SUPPORT_VERSION": "$_ANDROID_SUPPORT_VERSION",
+            "TAG_NAME": "$TAG_NAME",
+            "BRANCH_NAME": "$BRANCH_NAME",
+            "SHORT_SHA": "$SHORT_SHA"
+          }
+        EOF
+        else
+          cp /workspace/default.config.json /workspace/config.json
+        fi
+  ### Unit Test
+  - id: unit-test
+    wait_for: ['install', 'configure']
+    name: gcr.io/cloud-builders/yarn
+    args: ['test']
+  ### Build
+  - id: build
+    name: gcr.io/cloud-builders/yarn
+    wait_for: ['install', 'configure']
+    args: ['cloudbuild']
+  ### UI Test
+  - id: ui-test.configure
+    wait_for: ['-']
+    name: gcr.io/cloud-builders/docker
+    entrypoint: /bin/bash
+    args:
+      - -c
+      - |
+        docker pull selenium/standalone-chrome:latest
+        openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 -subj "/C=TW/ST=Taipei/L=Taipei/O=SWAG/CN=SWAG" -keyout mockApi.key -out mockApi.crt
+  ### Deploy
+  - id: deploy.format
+    name: ubuntu
+    wait_for: ['unit-test', 'build']
+    entrypoint: /bin/bash
+    args:
+      - -c
+      - |
+        mkdir /workspace/artifacts
+        if [ "$_IS_FROM_BUILD_TRIGGER" == "true" ]
+        then
+          cp -r /workspace/dist/selenium /workspace/artifacts
+          cp -r /workspace/dist/client/js /workspace/artifacts
+          cp -r /workspace/dist/client/img /workspace/artifacts
+          cp /workspace/dist/client/*.js /workspace/artifacts
+          cp /workspace/dist/client/manifest*.json /workspace/artifacts
+          cp /workspace/dist/client/html/*.html /workspace/artifacts
+        else
+          touch /workspace/artifacts/prevent-gsutil-error.txt
+        fi
+        find /workspace/artifacts
+  - id: deploy.folders
+    name: gcr.io/cloud-builders/gsutil
+    wait_for: ['deploy.format']
+    entrypoint: /bin/bash
+    args:
+      - -c
+      - |
+        directory_name="$(sed 's|[^A-Za-z0-9]|-|g' <<< $BRANCH_NAME)"
+        gsutil -m rsync -r artifacts gs://${_BUCKET}/${directory_name}
+        echo "https://${directory_name}.app.swag.live"
+substitutions: # default values
+  _BUCKET: develop.app.swag.live
+options:
+  machineType: 'N1_HIGHCPU_32'
+## artifacts can only put all objects (js/*.js, img/*) in ONE folder.
+## can never keep folder structure on buckets.
+#artifacts:
+#  objects:
+#    location: 'gs://${_BUCKET}/deposit'
+#    paths: [ '/workspace/artifacts/**' ]
