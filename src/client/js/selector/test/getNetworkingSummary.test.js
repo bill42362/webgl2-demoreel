@@ -14,33 +14,46 @@ import reducer from '../../reducer/reducer.js';
 import getNetworkingSummary from '../getNetworkingSummary.js';
 
 describe('selector getNetworkingSummary', () => {
-  it('should return summary (`idle`, `error`, `fetching` or `fetched`) by select path', () => {
+  it("should return status ['idle', 'error', 'fetching', 'fetched'], and error by select path", () => {
     const selectPath = ['randomPath1', 'randomPath2'];
     const store = createStore(reducer, applyMiddleware(thunk));
-    expect(getNetworkingSummary(store.getState(), selectPath)).toEqual('idle');
+    expect(getNetworkingSummary(store.getState(), selectPath)).toEqual({
+      status: 'idle',
+      error: null,
+    });
 
     store.dispatch({ type: SET_NETWORKING_FETCHING, payload: { selectPath } });
-    expect(getNetworkingSummary(store.getState(), selectPath)).toEqual(
-      'fetching'
-    );
+    expect(getNetworkingSummary(store.getState(), selectPath)).toEqual({
+      status: 'fetching',
+      error: null,
+    });
 
     store.dispatch({ type: SET_NETWORKING_SUCCESS, payload: { selectPath } });
-    expect(getNetworkingSummary(store.getState(), selectPath)).toEqual(
-      'fetched'
-    );
+    expect(getNetworkingSummary(store.getState(), selectPath)).toEqual({
+      status: 'fetched',
+      error: null,
+    });
 
     store.dispatch({ type: SET_NETWORKING_FETCHING, payload: { selectPath } });
-    expect(getNetworkingSummary(store.getState(), selectPath)).toEqual(
-      'fetching'
-    );
+    expect(getNetworkingSummary(store.getState(), selectPath)).toEqual({
+      status: 'fetching',
+      error: null,
+    });
 
+    const sampleError = new Error('randomError');
     store.dispatch({
       type: SET_NETWORKING_ERROR,
-      payload: { error: new Error('randomError'), selectPath },
+      payload: { error: sampleError, selectPath },
     });
-    expect(getNetworkingSummary(store.getState(), selectPath)).toEqual('error');
+    expect(getNetworkingSummary(store.getState(), selectPath)).toEqual({
+      status: 'error',
+      error: sampleError,
+    });
 
     store.dispatch({ type: SET_NETWORKING_IDLE, payload: { selectPath } });
-    expect(getNetworkingSummary(store.getState(), selectPath)).toEqual('idle');
+    expect(getNetworkingSummary(store.getState(), selectPath)).toEqual({
+      status: 'idle',
+      error: null,
+    });
   });
 });
